@@ -9,8 +9,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 
-app.use(
-  cors({
+app.use(cors({
     origin: [
       "http://localhost:5173",
       process.env.FRONTEND_URL
@@ -20,7 +19,10 @@ app.use(
   })
 );
 
-// Health check
+app.get("/", (req, res) => {
+  res.send("Aether GPT API is running successfully!");
+});
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
