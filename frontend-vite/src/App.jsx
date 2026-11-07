@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import {Plus,MessageSquare,Send,PanelLeftClose,Sparkles,Menu,Trash2} from "lucide-react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 function App() {
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
@@ -15,7 +17,7 @@ function App() {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/thread");
+        const response = await fetch(`${API_URL}/api/thread`);
 
         const data = await response.json();
 
@@ -76,19 +78,16 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: userMessage,
-            threadId: chatId
-          })
-        }
-      );
+      const response = await fetch(`${API_URL}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: userMessage,
+        threadId: chatId
+      })
+    });
 
       const data = await response.json();
 
@@ -138,11 +137,17 @@ function App() {
 
   const deleteChat = async (threadId) => {
     try{
-      const response = await fetch(`http://localhost:8080/api/thread/${threadId}`,
-        {
-          method: "DELETE"
-        }
-    )
+    //   const response = await fetch(`http://localhost:8080/api/thread/${threadId}`,
+    //     {
+    //       method: "DELETE"
+    //     }
+    // )
+
+    const response = await fetch(`${API_URL}/api/thread/${encodeURIComponent(threadId)}`,
+    {
+      method: "DELETE"
+    });
+
     const data = await response.json();
 
     if (!response.ok) {
@@ -167,7 +172,7 @@ function App() {
   //Automatic Scrolling
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
-      behaviour: "smooth"
+      behavior: "smooth"
     })
   }, [currentChat?.messages.length, loading])
 
