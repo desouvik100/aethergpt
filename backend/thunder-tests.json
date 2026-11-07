@@ -1,0 +1,60 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Aether GPT API Tests",
+  "dateExported": "2026-09-13",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "name": "1. Test Database Connection",
+      "method": "POST",
+      "url": "http://localhost:8080/api/test",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": ""
+      },
+      "tests": []
+    },
+    {
+      "name": "2. Send Chat Message",
+      "method": "POST",
+      "url": "http://localhost:8080/api/chat",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"threadId\": \"thread_001\",\n  \"message\": \"Hello, how are you?\"\n}"
+      },
+      "tests": []
+    },
+    {
+      "name": "3. Get All Threads",
+      "method": "GET",
+      "url": "http://localhost:8080/api/thread",
+      "headers": [],
+      "body": {},
+      "tests": []
+    },
+    {
+      "name": "4. Get Specific Thread",
+      "method": "GET",
+      "url": "http://localhost:8080/api/thread/thread_001",
+      "headers": [],
+      "body": {},
+      "tests": []
+    },
+    {
+      "name": "5. Delete Thread",
+      "method": "DELETE",
+      "url": "http://localhost:8080/api/thread/thread_001",
+      "headers": [],
+      "body": {},
+      "tests": []
+    }
+  ]
+}
