@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-Gfm";
+import remarkGfm from "remark-gfm";
 
 function Message({role, content}) {
     return (
