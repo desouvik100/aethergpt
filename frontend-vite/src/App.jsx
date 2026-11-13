@@ -1,7 +1,17 @@
 import Message from "./components/Message";
 import { useState, useEffect, useRef } from "react";
+import { BeatLoader } from "react-spinners";
 import "./App.css";
-import {Plus,MessageSquare,Send,PanelLeftClose,Sparkles,Menu,Trash2} from "lucide-react";
+
+import {
+  Plus,
+  MessageSquare,
+  Send,
+  PanelLeftClose,
+  Sparkles,
+  Menu,
+  Trash2
+} from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -18,14 +28,14 @@ function App() {
     const fetchChats = async () => {
       try {
         const response = await fetch(`${API_URL}/api/thread`);
-
         const data = await response.json();
 
         if (!response.ok) {
           throw new Error(data.message || "Something went wrong");
         }
 
-        setChats(data.data.map((thread) => ({
+        setChats(
+          data.data.map((thread) => ({
             id: thread.threadId,
             title: thread.title,
             messages: thread.messages || []
@@ -35,6 +45,7 @@ function App() {
         console.error("Fetch chats error:", error);
       }
     };
+
     fetchChats();
   }, []);
 
@@ -46,7 +57,6 @@ function App() {
 
     let chatId = activeChat;
 
-    // Create a new chat if no chat is selected
     if (!chatId) {
       chatId = Date.now().toString();
       setActiveChat(chatId);
@@ -60,9 +70,12 @@ function App() {
         ...prev
       ]);
     }
-    //Add user message
+
+    // Add user message
     setChats((prev) =>
-      prev.map((chat) => chat.id === chatId ? {
+      prev.map((chat) =>
+        chat.id === chatId
+          ? {
               ...chat,
               messages: [
                 ...chat.messages,
@@ -71,7 +84,8 @@ function App() {
                   content: userMessage
                 }
               ]
-            } : chat
+            }
+          : chat
       )
     );
 
@@ -79,15 +93,15 @@ function App() {
 
     try {
       const response = await fetch(`${API_URL}/api/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: userMessage,
-        threadId: chatId
-      })
-    });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          threadId: chatId
+        })
+      });
 
       const data = await response.json();
 
@@ -95,12 +109,14 @@ function App() {
         throw new Error(data.message || "Chat request failed");
       }
 
+      // Update chat with backend thread ID
       setActiveChat(data.threadId);
 
       // Add assistant response
       setChats((prev) =>
         prev.map((chat) =>
-          chat.id === chatId ? {
+          chat.id === chatId
+            ? {
                 ...chat,
                 id: data.threadId,
                 messages: [
@@ -110,72 +126,73 @@ function App() {
                     content: data.reply
                   }
                 ]
-              } : chat
-          )
+              }
+            : chat
+        )
       );
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("Chat error:", error);
 
-      // Show error message
       setChats((prev) =>
         prev.map((chat) =>
-          chat.id === chatId ? {
+          chat.id === chatId
+            ? {
                 ...chat,
-                messages: [...chat.messages,
+                messages: [
+                  ...chat.messages,
                   {
                     role: "assistant",
                     content: "Unable to connect to the server. Please try again."
-                  }]
-              } : chat 
-            ));
-    }
-    finally {
+                  }
+                ]
+              }
+            : chat
+        )
+      );
+    } finally {
       setLoading(false);
     }
   };
 
   const deleteChat = async (threadId) => {
-    try{
-    //   const response = await fetch(`http://localhost:8080/api/thread/${threadId}`,
-    //     {
-    //       method: "DELETE"
-    //     }
-    // )
+    try {
+      const response = await fetch(
+        `${API_URL}/api/thread/${encodeURIComponent(threadId)}`,
+        {
+          method: "DELETE"
+        }
+      );
 
-    const response = await fetch(`${API_URL}/api/thread/${encodeURIComponent(threadId)}`,
-    {
-      method: "DELETE"
-    });
+      const data = await response.json();
 
-    const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete conversation");
+      }
 
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to delete conversation");
-    }
+      setChats((prev) =>
+        prev.filter((chat) => chat.id !== threadId)
+      );
 
-    setChats((prev) => prev.filter((chat) => chat.id !== threadId));
-
-    if (activeChat == threadId) {
-      setActiveChat(null);
-    }
-  }
-    catch(error){
-      console.error("Delete chat error: ", error);
+      if (activeChat === threadId) {
+        setActiveChat(null);
+      }
+    } catch (error) {
+      console.error("Delete chat error:", error);
       alert("Unable to delete conversation. Please try again.");
     }
-  }
+  };
 
-  //current chat
+  // Current selected chat
   const currentChat = chats.find((chat) => chat.id === activeChat);
 
-  //Automatic Scrolling
+  // Automatic scrolling
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
       behavior: "smooth"
-    })
-  }, [currentChat?.messages.length, loading])
+    });
+  }, [currentChat?.messages.length, loading]);
 
+  // Start new chat
   const newChat = () => {
     setActiveChat(null);
     setMessage("");
@@ -184,6 +201,7 @@ function App() {
   return (
     <div className="app-container">
 
+      {/* Sidebar */}
       {sidebarOpen && (
         <aside className="sidebar">
 
@@ -196,6 +214,7 @@ function App() {
             <button
               className="icon-btn"
               onClick={() => setSidebarOpen(false)}
+              title="Close sidebar"
             >
               <PanelLeftClose size={20} />
             </button>
@@ -211,27 +230,39 @@ function App() {
           </div>
 
           <div className="chat-history">
-      {chats.map((chat) => (
-      <div key={chat.id} className={`history-item ${activeChat === chat.id ? "active" : ""}`}>
-        <button className="history-chat-btn" onClick={() => setActiveChat(chat.id)} title={chat.title}>
-          <MessageSquare size={17} />
-          <span>{chat.title}</span>
-        </button>
+            {chats.map((chat) => (
+              <div
+                key={chat.id}
+                className={`history-item ${
+                  activeChat === chat.id ? "active" : ""
+                }`}
+              >
+                <button
+                  className="history-chat-btn"
+                  onClick={() => setActiveChat(chat.id)}
+                  title={chat.title}
+                >
+                  <MessageSquare size={17} />
+                  <span>{chat.title}</span>
+                </button>
 
-        <button className="delete-chat-btn" onClick={() => deleteChat(chat.id)} title="Delete conversation">
-          <Trash2 size={16} />
-        </button>
-      </div>
-      ))}
-    </div>
-
+                <button
+                  className="delete-chat-btn"
+                  onClick={() => deleteChat(chat.id)}
+                  title="Delete conversation"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
 
           <div className="sidebar-footer">
             <div className="sidebar-avatar">S</div>
 
-            <div>
+            <div className="user-info">
               <strong>Souvik</strong>
-              <small>Personal Account</small>
+              <small style={{ color: "white", paddingLeft: "30px" }}>Personal Account</small>
             </div>
           </div>
 
@@ -242,12 +273,23 @@ function App() {
 
         <header className="topbar">
 
-          {!sidebarOpen && (<button className="icon-btn" onClick={() => setSidebarOpen(true)}> <Menu size={22}/> </button>)}
+          {!sidebarOpen && (
+            <button
+              className="hamburger-btn"
+              onClick={() => setSidebarOpen(true)}
+              title="Open sidebar"
+            >
+              <Menu size={22} />
+            </button>
+          )}
 
-          <span className="model-name"> Aether GPT <span>3.6</span></span>
+          <span className="model-name">
+            Aether GPT <span>3.6</span>
+          </span>
 
         </header>
 
+        {/* Chat Area */}
         <section className="chat-area">
 
           {!currentChat ? (
@@ -257,31 +299,42 @@ function App() {
               </div>
 
               <h1>What can I help you with?</h1>
-              <p>Ask anything. Explore ideas. Create something amazing.</p>
+              <p>
+                Ask anything. Explore ideas. Create something amazing.
+              </p>
             </div>
           ) : (
             <div className="messages-container">
 
               {currentChat.messages.map((msg, index) => (
-                <Message key={index} role={msg.role} content={msg.content} />
+                <Message
+                  key={index}
+                  role={msg.role}
+                  content={msg.content}
+                />
               ))}
 
-              {loading && (
+              {loading && activeChat === currentChat.id && (
                 <div className="message-row assistant">
                   <div className="message-avatar">
                     <Sparkles size={18} />
                   </div>
 
                   <div className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <BeatLoader
+                      color="#a78bfa"
+                      size={8}
+                      margin={3}
+                    />
                   </div>
                 </div>
               )}
+
               <div ref={bottomRef}></div>
+
             </div>
           )}
+
         </section>
 
         <div className="input-section">
@@ -316,9 +369,7 @@ function App() {
           </p>
 
         </div>
-
       </main>
-
     </div>
   );
 }

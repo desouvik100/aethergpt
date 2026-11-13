@@ -1,6 +1,3 @@
-
-/* Sidebar conversation history */
-
 .chat-history {
   display: flex;
   flex-direction: column;
@@ -96,7 +93,7 @@
   display: flex;
   flex-direction: column;
   padding: 12px;
-  transition: width 0.3s ease;
+  transition: width 0.4 ease;
 }
 
 .sidebar-header {
@@ -127,20 +124,62 @@
 }
 
 .new-chat-btn:hover {
-  background: #292929;
+  background: rgb(33, 140, 87);
 }
 
 .sidebar-label {
-  color: #999;
+  color: #ba3d3d;
   font-size: 12px;
   margin: 30px 8px 12px;
   letter-spacing: 0.5px;
 }
 
+.sidebar-header .icon-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent !important;
+  color: #d4d4d4 !important;
+
+  border: none !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+
+  cursor: pointer;
+  flex-shrink: 0;
+
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-header .icon-btn:hover {
+  background: #2d2d2d !important;
+  color: #ffffff !important;
+}
+
+.sidebar-header .icon-btn:focus {
+  outline: none;
+}
+
 .chat-history {
+  border-radius: 1rem;
+  background-color: #171717;
+  color: #111;
   flex: 1;
   overflow-y: auto;
   margin-top: 5px;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 3rem;
 }
 
 .history-item {
@@ -171,6 +210,12 @@
   border-radius: 7px;
   text-align: left;
   font-size: 14px;
+}
+
+.history-heading {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px 12px;
 }
 
 .history-chat-btn span {
@@ -207,30 +252,31 @@
   border-top: 1px solid #333;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.user-avatar {
-  width: 40px;
-  height: 40px;
+.sidebar-avatar {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px;
+  min-height: 40px;
+
+  flex: 0 0 40px;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+
   border-radius: 50%;
   background: #8964d8;
+  color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 600;
-}
 
-.user-info p {
-  margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
-}
 
-.user-info span {
-  color: #999;
-  font-size: 12px;
+  overflow: hidden;
 }
 
 .main-content {
@@ -250,6 +296,22 @@
   padding: 0 28px;
   border-bottom: 1px solid #303030;
   background: #212121;
+}
+
+.topbar .icon-btn {
+  width: 40px;
+  margin-right: 1rem;
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  color: #f0f3f5;
+}
+
+.topbar .hamburger-btn {
+  margin-right: 10px;
+  background-color: transparent;
+  color: white;
+  border-color: transparent;
 }
 
 .topbar h3 {
